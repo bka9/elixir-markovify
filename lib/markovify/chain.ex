@@ -1,6 +1,14 @@
 defmodule Markovify.Chain do
+  @moduledoc """
+    Markovify.Chain is the model that represents the distribution and states of a given sentence structure.
+  """
   @begin "__BEGIN__"
   @finish "__END__"
+
+  @doc """
+    Builds the model of the sentences with the state size.
+  """
+  @spec build([[String.t]],number)::{{[{{Tuple.t,String.t},number}],number,Tuple.t,[String.t],[number]}, String.t}
   def build([head | _] = corpus, state_size) when is_list(head) do
     model = Enum.map(Enum.group_by(Enum.flat_map(corpus, fn(run) ->
       items = List.duplicate(@begin,state_size) ++ run ++ [ @finish ]
@@ -14,6 +22,10 @@ defmodule Markovify.Chain do
     Tuple.append(precompute_begin_state(model,state_size), List.flatten(corpus))
   end
 
+  @doc """
+    To optimize the algorithm this caches the choices that follow the beginning state and the distribution of these choices.
+  """
+  @spec precompute_begin_state([{{Tuple.t,String.t},number}], number)::{[{{Tuple.t, String.t},number}],number,Tuple.t,[String.t],[number]}
   defp precompute_begin_state(model,state_size) do
     begin_state = Tuple.duplicate(@begin,state_size)
     begin_choices = Enum.map(Enum.filter(model, fn({{state,_},_}) -> state == begin_state end), fn({{_,follow},_}) -> follow end)
@@ -21,6 +33,10 @@ defmodule Markovify.Chain do
     {model, state_size, {}, begin_choices, distrib}
   end
 
+  @doc """
+    Given the chain select a random word from the choices and distribution of the current state.
+  """
+  @spec move({[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]})::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]}, String.t}
   def move({model, state_size, state, begin_choices, begin_distribution, rejoined_text} = chain) do
     choices_weights = cond do
       state == Tuple.duplicate(@begin,state_size) -> {begin_choices, begin_distribution}
@@ -35,6 +51,10 @@ defmodule Markovify.Chain do
     end
   end
 
+  @doc """
+    Generate a sentence from the markov chain
+  """
+  @spec gen({[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t])::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]}, [String.t]}
   def gen({model,state_size,{},choices,dist,text},s_array\\[]) do
     gen({model,state_size,Tuple.duplicate(@begin,state_size),choices,dist,text},s_array)
   end
@@ -45,7 +65,11 @@ defmodule Markovify.Chain do
       {{model,state_size, state, b_choices, b_distrib, r_text}, next_word} -> gen({model,state_size,Tuple.delete_at(Tuple.append(state,next_word),0),b_choices,b_distrib, r_text}, s_array ++ [ next_word ])
     end
   end
-
+  
+  @doc """
+    Generates a sentence from the markov chain
+  """
+  @spec walk({[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]})::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}
   def walk(chain) do
     Markovify.Chain.gen(chain)
   end
