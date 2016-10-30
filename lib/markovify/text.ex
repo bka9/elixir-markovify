@@ -10,7 +10,7 @@ defmodule Markovify.Text do
   @doc """
     Creates a markov chain model based on the text provided and function to split the sentence and the size of the key.
   """
-  @spec model(String.t, ((String.t) -> [String.t]), number)::{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}
+  @spec model(String.t, ((String.t) -> [String.t]), number)::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}
   def model(text, fun \\ &Markovify.Splitter.split_into_sentences/1, text_size \\ 2) do
     runs = generate_corpus(fun.(text))
     Markovify.Chain.build(runs, text_size)
@@ -28,7 +28,7 @@ defmodule Markovify.Text do
   @doc """
     create a sentence from the markov chain making sure that the created sentence does not closely match an original sentence.
   """
-  @spec make_sentence({[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]},{number,number,number})::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}, String.t}
+  @spec make_sentence({{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]},{number,number,number})::{{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}, String.t}
   def make_sentence(chain, config \\ {@default_tries, @default_max_overlap_ratio, @default_max_overlap_total}) do
     {tries, max_overlap_ratio, max_overlap_total} = config
     check(chain,max_overlap_ratio,max_overlap_total,tries)

@@ -69,7 +69,7 @@ defmodule Markovify.Chain do
   @doc """
     Generates a sentence from the markov chain
   """
-  @spec walk({[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]})::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}
+  @spec walk({{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]})::{{[{{Tuple.t, String.t}, number}], number, Tuple.t, [String.t], [number],[String.t]},[String.t]}
   def walk(chain) do
     Markovify.Chain.gen(chain)
   end

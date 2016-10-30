@@ -42,7 +42,7 @@ defmodule Markovify.Mixfile do
   defp package do
     [# These are the default files included in the package
      name: :markovify,
-     files: ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+     files: ["lib", "mix.exs", "README*", "LICENSE*"],
      maintainers: ["Kevin Anderson"],
      licenses: ["GNU GPLv3"],
      links: %{"GitHub" => "https://github.com/bka9/elixir-markovify"}]
