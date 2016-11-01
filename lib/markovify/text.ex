@@ -85,7 +85,7 @@ defmodule Markovify.Text do
 
   defp create_grams(grams, _, _, 0), do: grams
   defp create_grams(grams,words, overlap_over, gram_count) do
-    index = gram_count - 1
+    index = round(gram_count) - 1
     create_grams(grams ++ [ Enum.slice(words, round(index)..round((index+overlap_over))) ], words, overlap_over, index)
   end
 end
